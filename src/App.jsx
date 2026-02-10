@@ -6,11 +6,11 @@ export default function App() {
   const [todos, setTodos] = useState([]);
   const [filter, setFilter] = useState("All");
   const [canInstall, setCanInstall] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
-  // 🔑 IMPORTANT: useRef instead of state
   const installPrompt = useRef(null);
 
-  /* ---------------- STORAGE ---------------- */
+  /* ---------- LOAD / SAVE ---------- */
   useEffect(() => {
     const saved = JSON.parse(localStorage.getItem("todos"));
     if (saved) setTodos(saved);
@@ -20,43 +20,36 @@ export default function App() {
     localStorage.setItem("todos", JSON.stringify(todos));
   }, [todos]);
 
-  /* ---------------- PWA INSTALL FIX ---------------- */
+  /* ---------- INSTALL ---------- */
   useEffect(() => {
     const handler = (e) => {
       e.preventDefault();
-      installPrompt.current = e;   // store safely
-      setCanInstall(true);         // show button
+      installPrompt.current = e;
+      setCanInstall(true);
     };
-
     window.addEventListener("beforeinstallprompt", handler);
-
     return () =>
       window.removeEventListener("beforeinstallprompt", handler);
   }, []);
 
   const handleInstall = async () => {
     if (!installPrompt.current) return;
-
     installPrompt.current.prompt();
     await installPrompt.current.userChoice;
-
     installPrompt.current = null;
     setCanInstall(false);
   };
 
-  /* ---------------- CRUD ---------------- */
+  /* ---------- CRUD ---------- */
   const addTodo = (todo) => setTodos([...todos, todo]);
-
   const deleteTodo = (id) =>
     setTodos(todos.filter((t) => t.id !== id));
-
   const toggleTodo = (id) =>
     setTodos(
       todos.map((t) =>
         t.id === id ? { ...t, completed: !t.completed } : t
       )
     );
-
   const updateTodo = (id, newText) =>
     setTodos(
       todos.map((t) =>
@@ -71,8 +64,13 @@ export default function App() {
 
   return (
     <div className="dashboard">
+      {/* OVERLAY */}
+      {menuOpen && (
+        <div className="overlay" onClick={() => setMenuOpen(false)} />
+      )}
+
       {/* SIDEBAR */}
-      <aside className="sidebar">
+      <aside className={`sidebar ${menuOpen ? "open" : ""}`}>
         <h2>📌 TaskFlow</h2>
         <nav>
           <button className="active">Dashboard</button>
@@ -86,15 +84,23 @@ export default function App() {
       <main className="main">
         {/* HEADER */}
         <header className="header">
-          <h1>Dashboard</h1>
+          <div className="left-header">
+            <button
+              className="hamburger"
+              onClick={() => setMenuOpen(true)}
+            >
+              ☰
+            </button>
+            <h1>Dashboard</h1>
+          </div>
 
-          <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
+          <div style={{ display: "flex", gap: "10px" }}>
             {canInstall && (
               <button className="install-btn" onClick={handleInstall}>
-                ⬇ Install App
+                ⬇ Install
               </button>
             )}
-            <span className="user">👤 User</span>
+            <span className="user">👤</span>
           </div>
         </header>
 

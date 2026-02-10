@@ -190,3 +190,94 @@ button {
   text-decoration: line-through;
   opacity: 0.6;
 }
+
+/* =========================
+   MOBILE RESPONSIVE FIX
+   ========================= */
+@media (max-width: 768px) {
+  .dashboard {
+    flex-direction: column;
+  }
+
+  /* Hide sidebar on mobile */
+  .sidebar {
+    display: none;
+  }
+
+  /* Main takes full width */
+  .main {
+    padding: 15px;
+  }
+
+  /* Header spacing */
+  .header h1 {
+    font-size: 20px;
+  }
+
+  /* Stats cards stack */
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Filters wrap nicely */
+  .filter {
+    flex-wrap: wrap;
+  }
+
+  /* Form inputs stack */
+  .form {
+    flex-direction: column;
+  }
+
+  .form input,
+  .form select,
+  .form button {
+    width: 100%;
+  }
+}
+
+/* ---------- HAMBURGER MENU ---------- */
+
+.hamburger {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: white;
+  cursor: pointer;
+}
+
+.left-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Overlay */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 9;
+}
+
+/* Mobile styles */
+@media (max-width: 768px) {
+  .hamburger {
+    display: block;
+  }
+
+  .sidebar {
+    position: fixed;
+    left: -260px;
+    top: 0;
+    height: 100vh;
+    width: 240px;
+    z-index: 10;
+    transition: left 0.3s ease;
+  }
+
+  .sidebar.open {
+    left: 0;
+  }
+}
